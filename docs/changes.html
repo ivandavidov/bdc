@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Промени при BDC</title>
+  <meta name="description" content="Дневник на важните промени при борсово търгуваните BDC.">
+  <link rel="alternate" type="application/rss+xml" title="BDC Радар — промени" href="feed.xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>Какво се промени</h1>
+      <p>Автоматичен дневник при всяко обновяване на данните: нови отчети и промяна на NAV, промени в дивидента и non-accruals, смяна на светофара и нови червени флагове.
+        Абонирайте се чрез <a href="feed.xml">RSS</a>.</p>
+    </div>
+  </div>
+  <div class="toolbar" role="group" aria-label="Филтри">
+    <input type="search" id="search" placeholder="Филтър по тикер" aria-label="Филтър по тикер">
+    <button class="chip" data-sev="bad" aria-pressed="false"><span class="dot red"></span>Внимание</button>
+    <button class="chip" data-sev="good" aria-pressed="false"><span class="dot green"></span>Добро</button>
+    <button class="chip" id="only-watch" aria-pressed="false">★ Само моите</button>
+  </div>
+  <div class="card" id="list"><div class="loading">Зареждане…</div></div>
+</main>
+<script type="module">
+  import { initLayout } from "./assets/js/layout.js";
+  import * as data from "./assets/js/data.js";
+  import * as store from "./assets/js/store.js";
+  import { eventHtml } from "./assets/js/events-ui.js";
+
+  initLayout();
+  const all = await data.events();
+  const state = { q: "", sev: new Set(), watch: false };
+  const list = document.getElementById("list");
+  function render() {
+    const watched = store.watchlist();
+    const rows = all.filter((e) =>
+      (!state.q || e.ticker.includes(state.q.toUpperCase())) &&
+      (!state.sev.size || state.sev.has(e.severity)) &&
+      (!state.watch || watched.has(e.ticker)));
+    list.innerHTML = rows.length ? rows.map((e) => eventHtml(e)).join("")
+      : `<p class="empty">${all.length ? "Няма промени, които отговарят на филтъра." : "Дневникът е празен: попълва се, когато данните се обновят поне два пъти."}</p>`;
+  }
+  document.getElementById("search").addEventListener("input", (e) => { state.q = e.target.value.trim(); render(); });
+  document.querySelectorAll("[data-sev]").forEach((b) => b.addEventListener("click", () => {
+    const s = b.dataset.sev;
+    state.sev.has(s) ? state.sev.delete(s) : state.sev.add(s);
+    b.setAttribute("aria-pressed", state.sev.has(s));
+    render();
+  }));
+  const w = document.getElementById("only-watch");
+  w.addEventListener("click", () => { state.watch = !state.watch; w.setAttribute("aria-pressed", state.watch); render(); });
+  render();
+</script>
+</body>
+</html>

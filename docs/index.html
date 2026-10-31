@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BDC Радар</title>
+  <meta name="description" content="Прегледна оценка на борсово търгуваните Business Development Companies (BDC): дивидент, NAV, кредитно качество, ливъридж и разходи.">
+  <link rel="alternate" type="application/rss+xml" title="BDC Радар — промени" href="feed.xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+</head>
+<body>
+<main>
+  <div class="page-head">
+    <div>
+      <h1>Борсово търгувани BDC</h1>
+      <p>Всички Business Development Companies на NYSE и Nasdaq, оценени по едни и същи правила: дивидентна устойчивост, стабилност на NAV, кредитно качество, ливъридж и разходи. <a href="methodology.html">Как се изчислява скорът?</a></p>
+    </div>
+    <div class="muted small" id="stamp"></div>
+  </div>
+
+  <div class="tiles" id="tiles"><div class="loading">Зареждане…</div></div>
+
+  <section>
+    <div class="toolbar" role="group" aria-label="Филтри">
+      <input type="search" id="search" placeholder="Търси тикер, име или мениджър" aria-label="Търсене">
+      <button class="chip" data-light="green" aria-pressed="false"><span class="dot green"></span>Силни</button>
+      <button class="chip" data-light="yellow" aria-pressed="false"><span class="dot yellow"></span>Наблюдавай</button>
+      <button class="chip" data-light="red" aria-pressed="false"><span class="dot red"></span>Слаби</button>
+      <button class="chip" id="only-watch" aria-pressed="false">★ Само моите</button>
+      <select id="managed" aria-label="Тип управление">
+        <option value="">Всяко управление</option>
+        <option value="internal">Вътрешно управлявани</option>
+        <option value="external">Външно управлявани</option>
+      </select>
+      <select id="size" aria-label="Размер">
+        <option value="">Всеки размер</option>
+        <option value="large">Пазарна кап. над $2 млрд.</option>
+        <option value="mid">$500 млн. – $2 млрд.</option>
+        <option value="small">Под $500 млн.</option>
+      </select>
+      <span class="spacer"></span>
+      <span class="muted small" id="count"></span>
+    </div>
+    <div class="toolbar" role="group" aria-label="Групи колони">
+      <span class="muted small">Колони:</span>
+      <button class="chip" data-group="dividend" aria-pressed="true">Дивидент</button>
+      <button class="chip" data-group="nav" aria-pressed="true">NAV</button>
+      <button class="chip" data-group="credit" aria-pressed="true">Кредит</button>
+      <button class="chip" data-group="leverage" aria-pressed="true">Ливъридж</button>
+      <button class="chip" data-group="costs" aria-pressed="false">Разходи</button>
+      <button class="chip" data-group="market" aria-pressed="false">Пазар</button>
+    </div>
+    <div class="table-wrap" id="table-wrap"></div>
+    <div class="compare-bar" id="compare-bar">
+      <span id="compare-text"></span>
+      <span>
+        <button class="btn" id="compare-clear" type="button">Изчисти</button>
+        <a class="btn primary" id="compare-go" href="compare.html">Сравни</a>
+      </span>
+    </div>
+  </section>
+
+  <section class="grid grid-2">
+    <div class="card">
+      <div class="card-head"><h2>Качество спрямо оценка</h2></div>
+      <p class="secondary small">Всяка точка е една BDC. По-горе = по-висок скор за качество; по-вляво = по-голяма отстъпка спрямо NAV. Горе вляво са „качество с отстъпка“.</p>
+      <div class="chart tall" id="scatter"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Последни промени</h2><a href="changes.html" class="small">Всички промени →</a></div>
+      <div id="events"><div class="loading">Зареждане…</div></div>
+    </div>
+  </section>
+</main>
+<script type="module" src="assets/js/page-index.js"></script>
+</body>
+</html>

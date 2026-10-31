@@ -1,0 +1,6 @@
+edgartools>=5.60
+yfinance>=1.0
+pandas>=2.2
+pyyaml>=6.0
+requests>=2.31
+pytest>=8.0

@@ -1,0 +1,83 @@
+# Кандидат-тагове за всяка метрика, по приоритет. За всеки период се взема
+# стойността от първия таг, който я има; липсващите периоди се допълват от следващите.
+# Таговете без префикс са от us-gaap.
+
+instant:
+  nav_per_share:
+    unit: USD/shares
+    tags: [NetAssetValuePerShare]
+  net_assets:
+    unit: USD
+    tags: [StockholdersEquity, AssetsNet]
+  total_assets:
+    unit: USD
+    tags: [Assets]
+  liabilities:
+    unit: USD
+    tags: [Liabilities]
+  investments_fv:
+    unit: USD
+    tags: [InvestmentOwnedAtFairValue]
+  investments_cost:
+    unit: USD
+    tags: [InvestmentOwnedAtCost]
+  debt:
+    unit: USD
+    tags: [LongTermDebt, DebtInstrumentCarryingAmount, DebtLongtermAndShorttermCombinedAmount, LongTermDebtNoncurrent]
+  cash:
+    unit: USD
+    tags: [CashAndCashEquivalentsAtCarryingValue, CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents, Cash, CashAndCashEquivalentsFairValueDisclosure]
+  shares:
+    unit: shares
+    tags: [CommonStockSharesOutstanding, SharesOutstanding, "dei:EntityCommonStockSharesOutstanding"]
+  asset_coverage:
+    unit: pure
+    tags: [InvestmentCompanySeniorSecurityIndebtednessAssetCoverageRatio]
+  debt_rate:
+    unit: pure
+    tags: [DebtWeightedAverageInterestRate]
+
+# Потоци за период: тримесечните стойности се изчисляват от YTD при нужда.
+duration:
+  nii_per_share:
+    unit: USD/shares
+    tags: [InvestmentCompanyInvestmentIncomeLossPerShare]
+  dist_per_share:
+    unit: USD/shares
+    tags: [InvestmentCompanyDistributionToShareholdersPerShare, CommonStockDividendsPerShareDeclared]
+  nii:
+    unit: USD
+    tags: [NetInvestmentIncome, InvestmentIncomeOperatingAfterExpenseAndTax, InvestmentIncomeNet]
+  total_income:
+    unit: USD
+    tags: [GrossInvestmentIncomeOperating, InvestmentIncomeInterestAndDividend, InterestAndDividendIncomeOperating, Revenues]
+  pik_interest:
+    unit: USD
+    tags: [InterestIncomeOperatingPaidInKind, InterestAndDividendIncomeOperatingPaidInKind, PaidInKindInterest]
+  pik_dividend:
+    unit: USD
+    tags: [DividendIncomeOperatingPaidInKind]
+  interest_expense:
+    unit: USD
+    tags: [InterestExpense, InterestExpenseOperating, InterestExpenseDebt, InterestAndDebtExpense, InterestExpenseBorrowings, InterestExpenseDebtExcludingAmortization, InterestExpenseNonoperating]
+  mgmt_fee:
+    unit: USD
+    tags: [ManagementFeeExpense]
+  incentive_fee:
+    unit: USD
+    tags: [IncentiveFeeExpenseIncomeBased, IncentiveFeeExpense]
+  net_increase:
+    unit: USD
+    tags: [NetIncomeLoss, InvestmentCompanyNetAssetsFromOperationsIncreaseDecrease]
+  buybacks:
+    unit: USD
+    tags: [PaymentsForRepurchaseOfCommonStock, StockRepurchasedDuringPeriodValue]
+
+# Годишни (анюализирани) коефициенти от финансовите highlights: взема се както е отчетен.
+ratio:
+  expense_ratio:
+    unit: pure
+    tags: [InvestmentCompanyExpenseRatioIncludingIncentiveFee]
+  nii_ratio:
+    unit: pure
+    tags: [InvestmentCompanyInvestmentIncomeLossRatio]

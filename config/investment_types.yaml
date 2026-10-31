@@ -1,0 +1,20 @@
+# Нормализиране на типа инвестиция (свободен текст в отчетите) към групи.
+# Правилата се проверяват отгоре надолу; първото съвпадение (regex, без значение
+# от главни/малки букви) печели. Всичко несъвпаднало отива в "other".
+# Структурираните (JV, CLO) са първи, за да не попаднат „Senior Loan Fund“ JV в първия залог.
+groups:
+  - key: structured
+    label: Съвместни предприятия / структурирани (JV, CLO)
+    patterns: ["joint venture", "\\bjv\\b", "\\bclo\\b", "loan fund", "credit fund", "collateralized", "lending program", "structured", "asset[- ]backed", "llc interest", "lp interest", "limited partner", "specialty finance"]
+  - key: first_lien
+    label: Първи залог (first lien / senior secured)
+    patterns: ["first[ -]?lien", "1st lien", "unitranche", "senior secured", "senior loan", "^secured debt", "secured loan", "senior debt", "revolv", "term loan", "delayed draw", "bank loan", "senior lien", "first out", "asset[- ]based", "one[ -]?stop", "equipment financ", "\\btl\\b"]
+  - key: second_lien
+    label: Втори залог (second lien)
+    patterns: ["second[ -]?lien", "2nd lien", "last out", "junior secured"]
+  - key: subordinated
+    label: Необезпечен / подчинен дълг
+    patterns: ["subordinat", "mezzanine", "unsecured", "convertible", "notes?$", "bond", "debt securit", "^debt", "corporate debt", "secured debt"]
+  - key: equity
+    label: Акции и варанти
+    patterns: ["equity", "stock", "warrant", "preferred", "common", "membership", "units?$", "partnership interest", "options?$", "royalt", "ordinary shares", "^partnership"]

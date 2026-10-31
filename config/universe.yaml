@@ -1,0 +1,553 @@
+# Борсово търгувани BDC. Генерира се от pipeline/universe.py;
+# ръчните полета (manager, managed, exclude, note) се запазват при обновяване.
+# managed: internal | external | auto (auto = по XBRL: има ли такса за управление)
+companies:
+  AFCG:
+    ticker: AFCG
+    cik: 1822523
+    name: Advanced Flower Capital Inc.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-01950
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Advanced Flower Capital Management
+  ARCC:
+    ticker: ARCC
+    cik: 1287750
+    name: Ares Capital Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00663
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Ares Management
+  BBDC:
+    ticker: BBDC
+    cik: 1379785
+    name: Barings BDC, Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00733
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Barings
+  BCIC:
+    ticker: BCIC
+    cik: 1372807
+    name: BCP Investment Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00735
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: BC Partners
+  BCSF:
+    ticker: BCSF
+    cik: 1655050
+    name: Bain Capital Specialty Finance, Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01175
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Bain Capital Credit
+  BXSL:
+    ticker: BXSL
+    cik: 1736035
+    name: Blackstone Secured Lending Fund
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01299
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Blackstone
+  CCAP:
+    ticker: CCAP
+    cik: 1633336
+    name: Crescent Capital BDC, Inc.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-01132
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Crescent Capital
+  CGBD:
+    ticker: CGBD
+    cik: 1544206
+    name: Carlyle Secured Lending, Inc.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00995
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Carlyle
+  CION:
+    ticker: CION
+    cik: 1534254
+    name: Cion Investment Corp
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00941
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: CION Investment Management
+  CSWC:
+    ticker: CSWC
+    cik: 17313
+    name: Capital Southwest Corp
+    exchange: Nasdaq
+    fye: '0331'
+    file_number: 814-00061
+    managed: internal
+    added: '2026-10-31'
+    active: true
+    manager: вътрешно управление
+  FDUS:
+    ticker: FDUS
+    cik: 1513363
+    name: Fidus Investment Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00861
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Fidus Investment Advisors
+  FSK:
+    ticker: FSK
+    cik: 1422183
+    name: FS KKR Capital Corp
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00757
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: FS/KKR Advisor
+  GAIN:
+    ticker: GAIN
+    cik: 1321741
+    name: Gladstone Investment Corporation
+    exchange: Nasdaq
+    fye: '0331'
+    file_number: 814-00704
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Gladstone Management
+  GBDC:
+    ticker: GBDC
+    cik: 1476765
+    name: Golub Capital BDC, Inc.
+    exchange: Nasdaq
+    fye: 0930
+    file_number: 814-00794
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Golub Capital
+  GECC:
+    ticker: GECC
+    cik: 1675033
+    name: Great Elm Capital Corp.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-01211
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Great Elm Capital Management
+  GLAD:
+    ticker: GLAD
+    cik: 1143513
+    name: Gladstone Capital Corp
+    exchange: Nasdaq
+    fye: 0930
+    file_number: 814-00237
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Gladstone Management
+  GSBD:
+    ticker: GSBD
+    cik: 1572694
+    name: Goldman Sachs BDC, Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00998
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Goldman Sachs Asset Management
+  HRZN:
+    ticker: HRZN
+    cik: 1487428
+    name: Horizon Technology Finance Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00802
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Monroe Capital
+  HTGC:
+    ticker: HTGC
+    cik: 1280784
+    name: Hercules Capital, Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00702
+    managed: internal
+    added: '2026-10-31'
+    active: true
+    manager: вътрешно управление
+  ICMB:
+    ticker: ICMB
+    cik: 1578348
+    name: Investcorp Credit Management BDC, Inc.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-01054
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Investcorp
+  KBDC:
+    ticker: KBDC
+    cik: 1747172
+    name: Kayne Anderson BDC, Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01363
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Kayne Anderson
+  LIEN:
+    ticker: LIEN
+    cik: 1843162
+    name: Chicago Atlantic BDC, Inc.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-01383
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Chicago Atlantic
+  MAIN:
+    ticker: MAIN
+    cik: 1396440
+    name: Main Street Capital Corp
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00746
+    managed: internal
+    added: '2026-10-31'
+    active: true
+    manager: вътрешно управление
+  MFIC:
+    ticker: MFIC
+    cik: 1278752
+    name: Midcap Financial Investment Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00646
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Apollo
+  MSDL:
+    ticker: MSDL
+    cik: 1782524
+    name: Morgan Stanley Direct Lending Fund
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01332
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Morgan Stanley
+  MSIF:
+    ticker: MSIF
+    cik: 1535778
+    name: MSC Income Fund, Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00939
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Main Street (MSC Adviser)
+  NCDL:
+    ticker: NCDL
+    cik: 1737924
+    name: Nuveen Churchill Direct Lending Corp.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01338
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Nuveen Churchill
+  NMFC:
+    ticker: NMFC
+    cik: 1496099
+    name: New Mountain Finance Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00832
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: New Mountain Capital
+  NSLR:
+    ticker: NSLR
+    cik: 1509470
+    name: Neostellar Capital Corp.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00852
+    managed: auto
+    added: '2026-10-31'
+    active: true
+  OBDC:
+    ticker: OBDC
+    cik: 1655888
+    name: Blue Owl Capital Corp
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01190
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Blue Owl
+  OCSL:
+    ticker: OCSL
+    cik: 1414932
+    name: Oaktree Specialty Lending Corp
+    exchange: Nasdaq
+    fye: 0930
+    file_number: 814-00755
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Oaktree
+  OFS:
+    ticker: OFS
+    cik: 1487918
+    name: OFS Capital Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00813
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: OFS Capital Management
+  OTF:
+    ticker: OTF
+    cik: 1747777
+    name: Blue Owl Technology Finance Corp.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01284
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Blue Owl
+  OXSQ:
+    ticker: OXSQ
+    cik: 1259429
+    name: Oxford Square Capital Corp.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00638
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Oxford Square Management
+  PFLT:
+    ticker: PFLT
+    cik: 1504619
+    name: Pennantpark Floating Rate Capital Ltd.
+    exchange: NYSE
+    fye: 0930
+    file_number: 814-00891
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: PennantPark
+  PFX:
+    ticker: PFX
+    cik: 1490349
+    name: Phenixfin Corp
+    exchange: Nasdaq
+    fye: 0930
+    file_number: 814-00818
+    managed: internal
+    added: '2026-10-31'
+    active: true
+    manager: вътрешно управление
+  PNNT:
+    ticker: PNNT
+    cik: 1383414
+    name: Pennantpark Investment Corp
+    exchange: NYSE
+    fye: 0930
+    file_number: 814-00736
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: PennantPark
+  PSBD:
+    ticker: PSBD
+    cik: 1794776
+    name: Palmer Square Capital BDC Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01334
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Palmer Square
+  PSEC:
+    ticker: PSEC
+    cik: 1287032
+    name: Prospect Capital Corp
+    exchange: Nasdaq
+    fye: '0630'
+    file_number: 814-00659
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Prospect Capital Management
+  RAND:
+    ticker: RAND
+    cik: 81955
+    name: Rand Capital Corp
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00235
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Rand Capital Management
+  RVII:
+    ticker: RVII
+    cik: 2131040
+    name: Robinhood Ventures Fund II
+    exchange: NYSE
+    fye: '0331'
+    file_number: 814-01997
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Robinhood
+  RWAY:
+    ticker: RWAY
+    cik: 1653384
+    name: Runway Growth Finance Corp.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-01180
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Runway Growth Capital
+  SAR:
+    ticker: SAR
+    cik: 1377936
+    name: Saratoga Investment Corp.
+    exchange: NYSE
+    fye: 0228
+    file_number: 814-00732
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Saratoga Investment Advisors
+  SCM:
+    ticker: SCM
+    cik: 1551901
+    name: Stellus Capital Investment Corp
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-00971
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Stellus Capital Management
+  SLRC:
+    ticker: SLRC
+    cik: 1418076
+    name: SLR Investment Corp.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00754
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: SLR Capital Partners
+  TCPC:
+    ticker: TCPC
+    cik: 1370755
+    name: Blackrock TCP Capital Corp.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00899
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: BlackRock
+  TPVG:
+    ticker: TPVG
+    cik: 1580345
+    name: Triplepoint Venture Growth BDC Corp.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 814-01044
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: TriplePoint Advisers
+  TRIN:
+    ticker: TRIN
+    cik: 1786108
+    name: Trinity Capital Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 001-39958
+    managed: internal
+    added: '2026-10-31'
+    active: true
+    manager: вътрешно управление
+  TSLX:
+    ticker: TSLX
+    cik: 1508655
+    name: Sixth Street Specialty Lending, Inc.
+    exchange: NYSE
+    fye: '1231'
+    file_number: 001-36364
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: Sixth Street
+  WHF:
+    ticker: WHF
+    cik: 1552198
+    name: Whitehorse Finance, Inc.
+    exchange: Nasdaq
+    fye: '1231'
+    file_number: 814-00967
+    managed: external
+    added: '2026-10-31'
+    active: true
+    manager: H.I.G. WhiteHorse
