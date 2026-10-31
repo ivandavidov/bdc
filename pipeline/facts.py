@@ -152,6 +152,7 @@ def extract(facts: dict, splits: list[tuple[str, float]] | None = None) -> dict:
     series: dict[str, dict[str, float]] = {}
     for name, spec in TAGS["instant"].items():
         series[name] = instant_series(facts, spec, splits)
+    nav_all = dict(sorted(series["nav_per_share"].items()))  # incl. annual points before any gap
     qends = quarter_ends(series["nav_per_share"])
     for name, spec in TAGS["duration"].items():
         series[name] = quarterly_series(facts, spec, qends, splits)
@@ -160,7 +161,7 @@ def extract(facts: dict, splits: list[tuple[str, float]] | None = None) -> dict:
     series = {k: {d: v for d, v in s.items() if d in qends} for k, s in series.items()}
     annual = {name: annual_series(facts, TAGS["duration"][name], splits)
               for name in ("total_income", "nii", "pik_interest", "pik_dividend", "interest_expense")}
-    return {"quarters": qends, "series": series, "annual": annual}
+    return {"quarters": qends, "series": series, "annual": annual, "nav_all": nav_all}
 
 
 if __name__ == "__main__":

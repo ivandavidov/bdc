@@ -16,7 +16,8 @@ const COLUMNS = [
   { key: "pik_pct_ttm", group: "dividend" },
   { key: "nav_chg_1y", group: "nav" },
   { key: "nav_tr_3y", group: "nav" },
-  { key: "nonaccrual_fv", group: "credit" },
+  { key: "nav_cagr_long", group: "nav" },
+  { key: "nonaccrual_cost", group: "credit" },
   { key: "fv_cost", group: "credit" },
   { key: "first_lien", group: "credit" },
   { key: "net_de", group: "leverage" },
@@ -61,7 +62,7 @@ function tiles(rows) {
     </div></div>`,
     tile("Медиана P/NAV", f.ratio(median(rows.map((r) => r.p_nav))), "цена спрямо NAV/акция"),
     tile("Медиана доходност", f.pct(median(rows.map((r) => r.yield_fwd))), "редовен дивидент ÷ цена"),
-    tile("Медиана non-accruals", f.pct(median(rows.map((r) => r.nonaccrual_fv))), "% от портфейла (FV)"),
+    tile("Медиана non-accruals", f.pct(median(rows.map((r) => r.nonaccrual_cost))), "% от портфейла по цена"),
     tile("Медиана покритие", f.pct(median(rows.map((r) => r.coverage_ttm)), 0), "NII ÷ дивидент, 12 м"),
   ].join("");
 }

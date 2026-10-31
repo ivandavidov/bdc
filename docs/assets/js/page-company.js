@@ -74,6 +74,7 @@ function scoreHtml(c, meta) {
         <div style="margin-top:6px">${statusHtml(sc.light)}</div>
       </div>
       ${sc.incomplete ? `<p class="small secondary" style="margin-top:8px">Налични са само ${f.pct(sc.coverage, 0)} от теглото на скора, затова светофар не се дава. Числото е ориентировъчно.</p>` : ""}
+      ${sc.weak?.length ? `<div class="flag">Светофарът е червен, защото „${sc.weak.map((k) => cats[k].label).join("“, „")}“ е под ${meta.scoring.critical.floor} точки. Силните други категории не могат да компенсират това.</div>` : ""}
       <h3 style="margin-top:16px">Червени флагове</h3>${flags}
     </div>
     <div><div class="breakdown">${rows}</div>
@@ -86,15 +87,16 @@ function metricsHtml(c, meta) {
   const pct = c.percentiles ?? {};
   const groups = [
     ["Дивидент", ["coverage_ttm", "coverage_q", "yield_ttm", "cuts_5y", "div_change_1y", "pik_pct_ttm"]],
-    ["NAV и резултатност", ["nav_tr_1y", "nav_tr_3y", "nav_tr_5y", "nav_chg_1y", "nav_chg_3y", "nii_roe_ttm"]],
-    ["Кредитно качество", ["nonaccrual_fv", "nonaccrual_cost", "fv_cost", "first_lien", "top10", "n_companies"]],
+    ["NAV и резултатност", ["nav_tr_1y", "nav_tr_3y", "nav_tr_5y", "nav_chg_1y", "nav_chg_3y", "nav_cagr_long", "nii_roe_ttm"]],
+    ["Кредитно качество", ["nonaccrual_cost", "nonaccrual_fv", "fv_cost", "first_lien", "top10", "n_companies"]],
     ["Ливъридж и разходи", ["de", "net_de", "asset_coverage", "opex_ratio", "tsr_1y", "tsr_3y"]],
   ];
   return `<div class="grid grid-2">${groups.map(([title, keys]) => `<div><h3>${title}</h3>
     <table class="compact kv"><tbody>${keys.map((k) => {
       const p = pct[k];
       const approx = k === "de" && s.de_approx ? ` <span class="badge" title="Дългът не е отделно маркиран в XBRL; използвани са общите задължения">прибл.</span>` : "";
-      return `<tr><td title="${f.escapeHtml(METRICS[k].help)}">${METRICS[k].label}${approx}</td><td class="num">${valueWithDot(k, s[k])}</td>
+      const yrs = k === "nav_cagr_long" && s.nav_long_years ? ` <span class="muted small">(${f.num(s.nav_long_years, 0)} г.)</span>` : "";
+      return `<tr><td title="${f.escapeHtml(METRICS[k].help)}">${METRICS[k].label}${yrs}${approx}</td><td class="num">${valueWithDot(k, s[k])}</td>
         <td class="pct muted small" title="Персентил спрямо всички борсови BDC (по-високо = по-добре)">${p === undefined ? "" : `по-добре от ${p}%`}</td></tr>`;
     }).join("")}</tbody></table></div>`).join("")}</div>`;
 }
@@ -174,7 +176,7 @@ function renderCharts(c, sector) {
     charts.line(naEl, [
       { name: "по справедлива стойност", data: naIdx.map((i) => q.nonaccrual_fv[i]) },
       { name: "по цена на придобиване", data: naIdx.map((i) => q.nonaccrual_cost[i]) },
-      { name: "Медиана на сектора (FV)", data: naIdx.map((i) => sectorSeries("nonaccrual_fv")[i]) },
+      { name: "Медиана на сектора (цена)", data: naIdx.map((i) => sectorSeries("nonaccrual_cost")[i]) },
     ], { time: false, categories: naIdx.map((i) => labels[i]), yFmt: (v) => f.pct(v, 1), yMin: 0 });
   } else {
     naEl.outerHTML = `<p class="empty">Non-accruals не са открити в XBRL данните на отчетите.</p>`;

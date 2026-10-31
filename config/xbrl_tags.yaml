@@ -30,6 +30,9 @@ instant:
   shares:
     unit: shares
     tags: [CommonStockSharesOutstanding, SharesOutstanding, "dei:EntityCommonStockSharesOutstanding"]
+  preferred:
+    unit: USD
+    tags: [TemporaryEquityCarryingAmountAttributableToParent, PreferredStockLiquidationPreferenceValue, PreferredStockValue]
   asset_coverage:
     unit: pure
     tags: [InvestmentCompanySeniorSecurityIndebtednessAssetCoverageRatio]
@@ -60,6 +63,9 @@ duration:
   interest_expense:
     unit: USD
     tags: [InterestExpense, InterestExpenseOperating, InterestExpenseDebt, InterestAndDebtExpense, InterestExpenseBorrowings, InterestExpenseDebtExcludingAmortization, InterestExpenseNonoperating]
+  pref_dividends:
+    unit: USD
+    tags: [PreferredStockDividendsIncomeStatementImpact, DividendsPreferredStock]
   mgmt_fee:
     unit: USD
     tags: [ManagementFeeExpense]

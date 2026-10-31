@@ -56,7 +56,7 @@ def diff(prev: dict, cur: dict, company: dict) -> list[dict]:
         change = c_div / p_div - 1
         add("dividend", "bad" if change < 0 else "good",
             f"Редовният дивидент е {'намален' if change < 0 else 'увеличен'}: {_num(p_div)} → {_num(c_div)} $ годишно ({_pct(change)})")
-    p_na, c_na = prev.get("nonaccrual_fv"), cur.get("nonaccrual_fv")
+    p_na, c_na = prev.get("nonaccrual_cost"), cur.get("nonaccrual_cost")
     if p_na is not None and c_na is not None and abs(c_na - p_na) >= 0.01:
         add("nonaccrual", "bad" if c_na > p_na else "good",
             f"Non-accruals: {p_na * 100:.1f}% → {c_na * 100:.1f}% от портфейла".replace(".", ","))

@@ -1,12 +1,12 @@
 from pipeline import events
 
 PREV = {"ticker": "XYZ", "nav_date": "2026-06-30", "nav_ps": 20.0, "light": "green", "total": 72,
-        "div_run_rate": 2.0, "nonaccrual_fv": 0.01, "flags": []}
+        "div_run_rate": 2.0, "nonaccrual_cost": 0.01, "flags": []}
 
 
 def test_new_report_light_dividend_and_flag_changes():
     cur = {**PREV, "nav_date": "2026-09-30", "nav_ps": 19.0, "light": "yellow", "total": 65,
-           "div_run_rate": 1.8, "nonaccrual_fv": 0.03, "flags": ["cut_12m"]}
+           "div_run_rate": 1.8, "nonaccrual_cost": 0.03, "flags": ["cut_12m"]}
     kinds = {e["kind"]: e for e in events.diff(PREV, cur, {})}
     assert set(kinds) == {"report", "light", "dividend", "nonaccrual", "flag"}
     assert kinds["report"]["severity"] == "bad"  # NAV −5%

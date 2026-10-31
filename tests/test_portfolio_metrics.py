@@ -32,6 +32,7 @@ def test_economic_return_and_coverage():
             "nav_per_share", "nii_per_share", "dist_per_share", "net_assets", "debt", "cash", "liabilities",
             "investments_fv", "investments_cost", "total_income", "nii", "interest_expense", "pik_interest",
             "pik_dividend", "asset_coverage", "shares", "mgmt_fee", "incentive_fee", "expense_ratio",
+            "preferred", "pref_dividends",
         )},
     }
     s = extracted["series"]
@@ -47,3 +48,27 @@ def test_economic_return_and_coverage():
     assert round(q["coverage"][1], 4) == round(0.50 / 0.48, 4)
     assert q["de"][1] == 1.1 and q["de_approx"][1] is False
     assert round(q["asset_coverage"][1], 4) == round(2100 / 1100, 4)
+
+
+def test_preferred_dividends_reduce_nii_and_preferred_counts_as_leverage():
+    names = ("nav_per_share", "nii_per_share", "dist_per_share", "net_assets", "debt", "cash", "liabilities",
+             "investments_fv", "investments_cost", "total_income", "nii", "interest_expense", "pik_interest",
+             "pik_dividend", "asset_coverage", "shares", "mgmt_fee", "incentive_fee", "expense_ratio",
+             "preferred", "pref_dividends")
+    q = "2026-06-30"
+    s = {n: {} for n in names}
+    s.update(nav_per_share={q: 5.7}, nii_per_share={q: 0.15}, nii={q: 75.0}, shares={q: 500.0},
+             pref_dividends={q: 25.0}, net_assets={q: 2850.0}, debt={q: 1000.0}, preferred={q: 1500.0},
+             asset_coverage={q: 3.85})
+    out = metrics.quarterly({"quarters": [q], "series": s}, [])
+    assert round(out["nii_ps"][0], 4) == 0.10
+    assert out["nii"][0] == 50.0
+    assert round(out["de"][0], 4) == round(2500 / 2850, 4)
+    assert round(out["asset_coverage"][0], 4) == round((2850 + 2500) / 2500, 4)
+
+
+def test_long_nav_change_uses_annual_points():
+    nav_all = {"2016-06-30": 10.0, "2021-06-30": 9.8, "2026-06-30": 5.7}
+    rate, years = metrics.long_nav_change(nav_all, "2026-06-30")
+    assert years == 10.0
+    assert round(rate, 4) == round((5.7 / 10.0) ** (1 / 10.0) - 1, 4)

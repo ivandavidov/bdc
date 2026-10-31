@@ -78,7 +78,7 @@ def build_company(ticker: str, meta: dict, state: dict, today: dt.date) -> dict 
         return None
     classified = dividends.classify((price or {}).get("dividends", []))
     q = metrics.quarterly(extracted, classified)
-    weekly = metrics.weekly_p_nav(price or {}, extracted["quarters"], q["nav_ps"])
+    weekly = metrics.weekly_p_nav(price or {}, extracted["nav_all"])
     snap = metrics.snapshot(meta, extracted, q, price, classified, weekly, today)
 
     keep = slice(-metrics.HISTORY_QUARTERS, None)
@@ -110,7 +110,7 @@ SUMMARY_FIELDS = [
     "price", "price_date", "nav_ps", "nav_date", "p_nav", "p_nav_avg_3y", "p_nav_z", "yield_fwd", "yield_ttm",
     "coverage_q", "coverage_ttm", "nav_chg_1y", "nav_chg_3y", "nav_tr_1y", "nav_tr_3y", "nav_tr_5y",
     "de", "net_de", "asset_coverage", "fv_cost", "pik_pct_ttm", "opex_ratio", "managed", "market_cap",
-    "net_assets", "investments_fv", "tsr_1y", "tsr_3y", "cuts_5y", "div_change_1y", "data_age_days",
+    "net_assets", "investments_fv", "tsr_1y", "tsr_3y", "cuts_5y", "nav_cagr_long", "nav_long_years", "div_change_1y", "data_age_days",
     "nonaccrual_fv", "nonaccrual_cost", "first_lien", "top10", "n_companies", "floating", "div_suspended",
     "div_run_rate", "nonaccrual_period",
 ]
@@ -134,7 +134,7 @@ def sector(companies: list[dict]) -> dict:
         for i, qd in enumerate(c["quarters"]):
             key = f"{qd[:4]}Q{(int(qd[5:7]) - 1) // 3 + 1}"
             bucket = by_quarter.setdefault(key, {})
-            for name in ("econ_return", "de", "coverage", "pik_pct", "fv_cost"):
+            for name in ("econ_return", "de", "coverage", "pik_pct", "fv_cost", "nonaccrual_cost"):
                 v = c["q"][name][i]
                 if v is not None:
                     bucket.setdefault(name, []).append(v)
@@ -144,7 +144,7 @@ def sector(companies: list[dict]) -> dict:
     quarters = sorted(by_quarter)[-metrics.HISTORY_QUARTERS:]
     med = {
         name: [median(by_quarter[k][name]) if len(by_quarter[k].get(name, [])) >= 5 else None for k in quarters]
-        for name in ("econ_return", "de", "coverage", "pik_pct", "fv_cost", "nonaccrual_fv")
+        for name in ("econ_return", "de", "coverage", "pik_pct", "fv_cost", "nonaccrual_fv", "nonaccrual_cost")
     }
     med["count"] = [max((len(v) for v in by_quarter[k].values()), default=0) for k in quarters]
 

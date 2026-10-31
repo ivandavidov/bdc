@@ -11,8 +11,8 @@ const ROWS = [
   ["Оценка", ["total"]],
   ["Пазар", ["price", "p_nav", "p_nav_avg_3y", "yield_fwd", "yield_ttm", "market_cap", "tsr_1y", "tsr_3y"]],
   ["Дивидент", ["coverage_ttm", "coverage_q", "cuts_5y", "div_change_1y", "pik_pct_ttm"]],
-  ["NAV", ["nav_ps", "nav_chg_1y", "nav_chg_3y", "nav_tr_1y", "nav_tr_3y", "nav_tr_5y"]],
-  ["Кредит", ["nonaccrual_fv", "fv_cost", "first_lien", "top10", "n_companies", "floating"]],
+  ["NAV", ["nav_ps", "nav_chg_1y", "nav_chg_3y", "nav_cagr_long", "nav_tr_1y", "nav_tr_3y", "nav_tr_5y"]],
+  ["Кредит", ["nonaccrual_cost", "nonaccrual_fv", "fv_cost", "first_lien", "top10", "n_companies", "floating"]],
   ["Ливъридж и разходи", ["de", "net_de", "asset_coverage", "opex_ratio", "managed"]],
 ];
 
@@ -112,7 +112,7 @@ function renderCharts(companies) {
   const econ = alignQuarterly(companies, "econ_return", 12);
   charts.bars(document.getElementById("cmp-econ"), econ.series, { categories: econ.categories, yFmt: (v) => f.pct(v, 1) });
 
-  const na = alignQuarterly(companies, "nonaccrual_fv", 8);
+  const na = alignQuarterly(companies, "nonaccrual_cost", 8);
   charts.line(document.getElementById("cmp-na"), na.series, { time: false, categories: na.categories, yFmt: (v) => f.pct(v, 1), yMin: 0, legend: true });
 
   const de = alignQuarterly(companies, "de", 12);
@@ -135,7 +135,7 @@ async function refresh() {
       <div class="card"><h3>P/NAV</h3><div class="chart" id="cmp-pnav"></div></div>
       <div class="card"><h3>Покритие на дивидента</h3><div class="chart" id="cmp-cov"></div></div>
       <div class="card"><h3>Икономическа доходност по тримесечия</h3><div class="chart" id="cmp-econ"></div></div>
-      <div class="card"><h3>Non-accruals (% FV)</h3><div class="chart" id="cmp-na"></div></div>
+      <div class="card"><h3>Non-accruals (% по цена на придобиване)</h3><div class="chart" id="cmp-na"></div></div>
       <div class="card"><h3>Ливъридж (D/E)</h3><div class="chart" id="cmp-de"></div></div>
     </section>`;
   renderCharts(companies);

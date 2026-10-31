@@ -21,7 +21,7 @@ async function main() {
       ${card("s-pnav", "Медиана P/NAV", "Седмично, за всички BDC с налична цена и NAV.")}
       ${card("s-econ", "Медиана на икономическата доходност", "По календарни тримесечия: (промяна на NAV + разпределения) ÷ начален NAV.")}
       ${card("s-cov", "Медиана на покритието на дивидента", "NII ÷ редовен дивидент.")}
-      ${card("s-na", "Медиана на non-accruals", "% от портфейла по справедлива стойност. Историята е кратка: събира се от отчетите напред във времето.")}
+      ${card("s-na", "Медиана на non-accruals", "% от портфейла по цена на придобиване. Историята е кратка: събира се от отчетите напред във времето.")}
       ${card("s-de", "Медиана на ливъриджа (D/E)", "")}
       ${card("s-pik", "Медиана на PIK дохода", "Дял на безкасовия доход в инвестиционния доход.")}
     </section>
@@ -54,10 +54,10 @@ async function main() {
     { categories: tail(labels), yFmt: (v) => f.pct(v, 1), colorBySign: true });
   charts.line(document.getElementById("s-cov"), [{ name: "Медиана", data: tail(m.coverage) }],
     { time: false, categories: tail(labels), yFmt: (v) => f.pct(v, 0), refLines: [{ y: 1, label: "100%" }] });
-  const naIdx = m.nonaccrual_fv.map((v, i) => (v === null ? null : i)).filter((i) => i !== null);
+  const naIdx = m.nonaccrual_cost.map((v, i) => (v === null ? null : i)).filter((i) => i !== null);
   const naEl = document.getElementById("s-na");
   if (naIdx.length) {
-    charts.line(naEl, [{ name: "Медиана", data: naIdx.map((i) => m.nonaccrual_fv[i]) }],
+    charts.line(naEl, [{ name: "Медиана", data: naIdx.map((i) => m.nonaccrual_cost[i]) }],
       { time: false, categories: naIdx.map((i) => labels[i]), yFmt: (v) => f.pct(v, 1), yMin: 0 });
   } else {
     naEl.outerHTML = `<p class="empty">Още няма достатъчно данни.</p>`;

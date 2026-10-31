@@ -11,7 +11,7 @@ CONFIG = yaml.safe_load((sec.ROOT / "config" / "scoring.yaml").read_text())
 # For percentiles: +1 when higher is better, -1 when lower is better.
 DIRECTION = {
     "coverage_ttm": 1, "coverage_q": 1, "cuts_5y": -1, "pik_pct_ttm": -1, "nav_tr_3y": 1, "nav_tr_5y": 1,
-    "nav_chg_1y": 1, "nav_chg_3y": 1, "nav_tr_1y": 1, "nonaccrual_fv": -1, "nonaccrual_cost": -1, "fv_cost": 1,
+    "nav_chg_1y": 1, "nav_chg_3y": 1, "nav_cagr_long": 1, "nav_tr_1y": 1, "nonaccrual_fv": -1, "nonaccrual_cost": -1, "fv_cost": 1,
     "first_lien": 1, "top10": -1, "net_de": -1, "de": -1, "asset_coverage": 1, "opex_ratio": -1,
     "yield_fwd": 1, "p_nav": -1, "nii_roe_ttm": 1, "tsr_1y": 1, "tsr_3y": 1, "market_cap": 1,
 }
@@ -38,7 +38,7 @@ def flags_for(snap: dict) -> list[str]:
     out = []
     if snap.get("coverage_below_90_2q"):
         out.append("coverage_below_90_2q")
-    if (snap.get("nonaccrual_fv") or 0) > 0.05:
+    if (snap.get("nonaccrual_cost") or 0) > 0.08:
         out.append("nonaccrual_high")
     if snap.get("nav_chg_1y") is not None and snap["nav_chg_1y"] < -0.10:
         out.append("nav_drop")
@@ -97,7 +97,12 @@ def score(snap: dict) -> dict:
     incomplete = (available_w / possible_w) < th["incomplete"] if possible_w else True
     if incomplete:
         light = None  # too little data for a verdict; the number is still shown with a badge
-    if light and len(flags) >= 3:
+    crit = CONFIG.get("critical", {})
+    weak = [k for k in crit.get("categories", [])
+            if categories[k]["score"] is not None and categories[k]["score"] < crit.get("floor", 0)]
+    if light and weak:
+        light = "red"
+    elif light and len(flags) >= 3:
         light = "red"
     elif light == "green" and flags:
         light = "yellow"
@@ -107,6 +112,7 @@ def score(snap: dict) -> dict:
         "categories": {k: v["score"] for k, v in categories.items()},
         "details": categories,
         "flags": flags,
+        "weak": weak,
         "valuation": valuation(snap),
         "coverage": round(available_w / possible_w, 2) if possible_w else 0,
         "incomplete": incomplete,
@@ -148,5 +154,6 @@ def public_config() -> dict:
             for k, v in CONFIG["categories"].items()
         },
         "flags": CONFIG["flags"],
+        "critical": CONFIG.get("critical", {}),
         "valuation": CONFIG["valuation"],
     }

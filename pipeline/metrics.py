@@ -44,6 +44,25 @@ def _latest_fiscal_year(extracted: dict, today: dt.date) -> str | None:
     return None
 
 
+def long_nav_change(nav_all: dict[str, float], nav_date: str | None) -> tuple[float | None, float | None]:
+    """Annualized NAV/share change over ~10 years (at least 5), from all reported NAV points.
+
+    Quarterly XBRL history can be short (PSEC tagged only annual NAV before
+    2021), so annual points fill in the long view of capital erosion.
+    """
+    if not nav_date or nav_date not in nav_all:
+        return None, None
+    end = dt.date.fromisoformat(nav_date)
+    points = [(dt.date.fromisoformat(d), v) for d, v in nav_all.items() if v and d < nav_date]
+    target = end - dt.timedelta(days=3652)
+    eligible = [(d, v) for d, v in points if (end - d).days >= 5 * 365 - 60]
+    if not eligible:
+        return None, None
+    start, base = min(eligible, key=lambda p: abs((p[0] - target).days))
+    years = (end - start).days / 365.25
+    return (nav_all[nav_date] / base) ** (1 / years) - 1, round(years, 1)
+
+
 def quarterly(extracted: dict, classified: list[dict]) -> dict[str, list]:
     """Aligned quarterly arrays; None where a value is unavailable."""
     qs = extracted["quarters"]
@@ -56,6 +75,13 @@ def quarterly(extracted: dict, classified: list[dict]) -> dict[str, list]:
     total_income, nii, interest = get("total_income"), get("nii"), get("interest_expense")
     pik_i, pik_d = get("pik_interest"), get("pik_dividend")
     reported_cov = get("asset_coverage")
+    shares, pref, pref_div = get("shares"), get("preferred"), get("pref_dividends")
+
+    # BDC income statements report NII before preferred dividends; the common
+    # shareholder only gets what is left (PSEC: ~$0.05/share per quarter)
+    nii_ps = [n - pd / sh if None not in (n, pd, sh) and sh else n for n, pd, sh in zip(nii_ps, pref_div, shares)]
+    nii_before_pref = nii  # operating costs come out of NII before preferred dividends
+    nii = [n - pd if n is not None and pd is not None else n for n, pd in zip(nii, pref_div)]
 
     reg_div = [divs.quarterly_regular(classified, q) for q in qs]
     out: dict[str, list] = {
@@ -69,7 +95,9 @@ def quarterly(extracted: dict, classified: list[dict]) -> dict[str, list]:
         "debt": debt,
         "total_income": total_income,
         "nii": nii,
-        "shares": get("shares"),
+        "shares": shares,
+        "preferred": pref,
+        "pref_div": pref_div,
         "mgmt_fee": get("mgmt_fee"),
         "incentive_fee": get("incentive_fee"),
         "expense_ratio": get("expense_ratio"),
@@ -77,13 +105,19 @@ def quarterly(extracted: dict, classified: list[dict]) -> dict[str, list]:
     out["coverage"] = [_div(n, d) for n, d in zip(nii_ps, reg_div)]
 
     de, de_approx, net_de, acr = [], [], [], []
-    for d, na, c, liab, rep in zip(debt, net_assets, cash, liabilities, reported_cov):
+    for d, na, c, liab, rep, pf in zip(debt, net_assets, cash, liabilities, reported_cov, pref):
         approx = d is None or (liab is not None and d > liab * 1.02)
         base = liab if approx else d
-        de.append(_div(base, na))
+        # preferred stock ranks ahead of common shareholders, so it counts as leverage
+        pf = pf if pf and na and pf > 0.005 * na else 0.0
+        senior = base + pf if base is not None else None
+        de.append(_div(senior, na))
         de_approx.append(approx and base is not None)
-        net_de.append(_div(base - (c or 0), na) if base is not None else None)
-        acr.append(rep if rep is not None else _div((na or 0) + base, base) if base else None)
+        net_de.append(_div(senior - (c or 0), na) if senior is not None else None)
+        if pf or rep is None:
+            acr.append(_div((na or 0) + senior, senior) if senior else None)
+        else:
+            acr.append(rep)
     out.update(de=de, de_approx=de_approx, net_de=net_de, asset_coverage=acr)
 
     out["fv_cost"] = [_div(a, b) for a, b in zip(fv, cost)]
@@ -92,7 +126,7 @@ def quarterly(extracted: dict, classified: list[dict]) -> dict[str, list]:
     out["pik_pct"] = [_div(p, t) for p, t in zip(pik, total_income)]
     out["opex"] = [
         t - n - (i or 0) if t is not None and n is not None and i is not None else None
-        for t, n, i in zip(total_income, nii, interest)
+        for t, n, i in zip(total_income, nii_before_pref, interest)
     ]
 
     econ, roe = [None], [None]
@@ -106,9 +140,9 @@ def quarterly(extracted: dict, classified: list[dict]) -> dict[str, list]:
     return out
 
 
-def weekly_p_nav(price: dict, quarters: list[str], nav: list) -> dict[str, list]:
-    """Weekly close and P/NAV using the latest reported quarter-end NAV at each date."""
-    pairs = [(q, v) for q, v in zip(quarters, nav) if v]
+def weekly_p_nav(price: dict, nav_points: dict[str, float]) -> dict[str, list]:
+    """Weekly close and P/NAV using the latest reported NAV at each date."""
+    pairs = [(d, v) for d, v in sorted(nav_points.items()) if v]
     dates, close, navs, p_nav = [], [], [], []
     k = -1
     for d, c, _ in price.get("weekly", []):
@@ -187,6 +221,7 @@ def snapshot(meta: dict, extracted: dict, q: dict, price: dict | None, classifie
     snap["nav_tr_1y"] = _chain(q["econ_return"][-4:]) if n > 4 else None
     snap["nav_tr_3y"] = _annualize(_chain(q["econ_return"][-12:]), 3) if n > 12 else None
     snap["nav_tr_5y"] = _annualize(_chain(q["econ_return"][-20:]), 5) if n > 20 else None
+    snap["nav_cagr_long"], snap["nav_long_years"] = long_nav_change(extracted.get("nav_all", {}), nav_date)
     navs5 = [v for v in q["nav_ps"][-21:] if v]
     peak, dd = None, 0.0
     for v in navs5:
