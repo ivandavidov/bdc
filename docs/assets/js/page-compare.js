@@ -9,7 +9,7 @@ initLayout();
 
 const ROWS = [
   ["Оценка", ["total"]],
-  ["Пазар", ["price", "p_nav", "p_nav_avg_3y", "yield_fwd", "yield_ttm", "market_cap", "tsr_1y", "tsr_3y"]],
+  ["Пазар", ["price", "p_nav", "p_nav_avg_3y", "yield_fwd", "yield_ttm", "market_cap", "tsr_1y", "tsr_3y", "insiders_pct", "institutions_pct"]],
   ["Дивидент", ["coverage_ttm", "coverage_q", "cuts_5y", "div_change_1y", "pik_pct_ttm"]],
   ["NAV", ["nav_ps", "nav_chg_1y", "nav_chg_3y", "nav_cagr_long", "nav_tr_1y", "nav_tr_3y", "nav_tr_5y"]],
   ["Кредит", ["nonaccrual_cost", "nonaccrual_fv", "fv_cost", "first_lien", "top10", "n_companies", "floating"]],

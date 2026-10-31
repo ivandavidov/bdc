@@ -271,6 +271,29 @@ function costsHtml(c) {
   </tbody></table>`;
 }
 
+function holdersHtml(c) {
+  const h = c.holders;
+  if (!h) return `<p class="muted">Няма данни за акционерите.</p>`;
+  const retail = h.institutions !== null && h.insiders !== null ? Math.max(0, 1 - h.institutions - h.insiders) : null;
+  const table = (rows, title) => rows?.length
+    ? `<h3>${title}</h3><div class="table-wrap"><table class="compact"><thead><tr><th>Акционер</th><th class="num">% от акциите</th>
+        <th class="num">Стойност</th><th class="num" title="Промяна на броя акции спрямо предходния отчет">Промяна</th><th class="num">Към</th></tr></thead>
+      <tbody>${rows.map((r) => `<tr><td>${f.escapeHtml(r.name)}</td><td class="num">${f.pct(r.pct, 2)}</td><td class="num">${f.compactMoney(r.value)}</td>
+        <td class="num ${f.deltaClass(r.change)}">${r.change === null ? f.DASH : f.signedPct(r.change)}</td><td class="num">${f.date(r.date)}</td></tr>`).join("")}</tbody></table></div>`
+    : "";
+  return `<div class="tiles">
+      <div class="tile"><div class="label">Инсайдери</div><div class="value">${f.pct(h.insiders, 1)}</div><div class="sub">ръководство, директори, мениджър</div></div>
+      <div class="tile"><div class="label">Институции</div><div class="value">${f.pct(h.institutions, 0)}</div><div class="sub">${h.institutions_count ? `${f.int(h.institutions_count)} институции` : ""}</div></div>
+      <div class="tile"><div class="label">Индивидуални и други</div><div class="value">${f.pct(retail, 0)}</div><div class="sub">остатъкът (приблизително)</div></div>
+    </div>
+    <div class="stack" style="margin-top:16px">
+      <div>${table(h.institutional, "Най-големи институционални акционери")}</div>
+      <div>${table(h.funds, "Най-големи фондове (вкл. ETF)")}</div>
+    </div>
+    <p class="small muted" style="margin-top:8px">Източник: Yahoo Finance по отчети 13F, които се подават до 45 дни след края на тримесечието; данните закъсняват 1–3 месеца.
+      Банките често държат акциите от името на клиенти. Пълен списък с акционери над 5%: отчети 13D/13G в <a href="${c.edgar_url}" target="_blank" rel="noopener">EDGAR ↗</a>.</p>`;
+}
+
 function filingsHtml(c) {
   return `<div class="table-wrap"><table class="compact"><thead><tr><th>Дата</th><th>Документ</th><th>Период</th></tr></thead><tbody>
     ${c.filings.map((x) => `<tr><td>${f.date(x.date)}</td><td><a href="${x.url}" target="_blank" rel="noopener">${x.form} ↗</a></td><td>${x.period ? f.date(x.period) : ""}</td></tr>`).join("")}
@@ -313,6 +336,7 @@ async function main() {
     </section>
     ${section("portfolio", "Портфейл", portfolioHtml(c))}
     ${section("dividends", "Дивиденти", dividendsHtml(c))}
+    ${section("holders", "Акционери", holdersHtml(c))}
     <section class="grid grid-2">
       <div class="card"><h2>Такси и управление</h2>${costsHtml(c)}</div>
       <div class="card"><h2>Отчети в SEC</h2>${filingsHtml(c)}</div>

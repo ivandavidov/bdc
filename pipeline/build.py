@@ -13,7 +13,7 @@ import logging
 import math
 from statistics import median
 
-from . import dividends, events, facts, metrics, portfolio, prices, scoring, sec, universe
+from . import dividends, events, facts, holders, metrics, portfolio, prices, scoring, sec, universe
 
 DATA = sec.ROOT / "docs" / "data"
 STATE = sec.CACHE / "state.json"
@@ -81,6 +81,10 @@ def build_company(ticker: str, meta: dict, state: dict, today: dt.date) -> dict 
     weekly = metrics.weekly_p_nav(price or {}, extracted["nav_all"])
     snap = metrics.snapshot(meta, extracted, q, price, classified, weekly, today)
 
+    owners = holders.get(ticker)
+    if owners:
+        snap["insiders_pct"] = owners.get("insiders")
+        snap["institutions_pct"] = owners.get("institutions")
     keep = slice(-metrics.HISTORY_QUARTERS, None)
     cut_from = (today - dt.timedelta(days=3650)).isoformat()
     return {
@@ -102,6 +106,7 @@ def build_company(ticker: str, meta: dict, state: dict, today: dt.date) -> dict 
         "dividends": [p for p in classified if p["date"] >= cut_from],
         "cuts": dividends.cuts(classified, today - dt.timedelta(days=3650)),
         "filings": _filings(subs, cik),
+        "holders": owners,
         "splits": splits,
     }
 
