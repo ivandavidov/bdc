@@ -1,0 +1,62 @@
+name: Обновяване на данните
+
+on:
+  schedule:
+    # Делнични дни, 22:30 UTC — след затварянето на борсите в САЩ
+    - cron: "30 22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      portfolio_history:
+        description: "Брой отчети за историята на non-accruals (по подразбиране 4)"
+        required: false
+        default: "4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Инсталиране на зависимостите
+        run: pip install -r requirements.txt
+
+      - name: Възстановяване на кеша (SEC, цени, портфейли)
+        uses: actions/cache@v4
+        with:
+          path: data_cache
+          key: data-cache-${{ github.run_id }}
+          restore-keys: data-cache-
+
+      - name: Тестове
+        run: python -m pytest -q
+
+      - name: Изграждане на данните
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: python -m pipeline.build --portfolio-history "${{ github.event.inputs.portfolio_history || '4' }}"
+
+      - name: Commit на обновените данни
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data docs/feed.xml config/universe.yaml
+          if git diff --cached --quiet; then
+            echo "Няма промени в данните."
+            exit 0
+          fi
+          git commit -m "Обновяване на данните $(date -u +%Y-%m-%d)"
+          git push
