@@ -13,7 +13,7 @@ import logging
 import math
 from statistics import median
 
-from . import dividends, events, facts, holders, metrics, portfolio, prices, scoring, sec, universe
+from . import dividends, events, facts, health, holders, metrics, portfolio, prices, scoring, sec, universe
 
 DATA = sec.ROOT / "docs" / "data"
 STATE = sec.CACHE / "state.json"
@@ -133,7 +133,7 @@ def summarize(companies: list[dict]) -> list[dict]:
 
 
 def sector(companies: list[dict]) -> dict:
-    """Cross-sectional medians by calendar quarter plus current percentiles."""
+    """Cross-sectional medians by calendar quarter plus portfolio health across all BDCs."""
     by_quarter: dict[str, dict[str, list]] = {}
     for c in companies:
         for i, qd in enumerate(c["quarters"]):
@@ -163,6 +163,7 @@ def sector(companies: list[dict]) -> dict:
         "quarters": quarters,
         "median": med,
         "p_nav": {"dates": wdates, "median": [median(weekly[d]) for d in wdates]},
+        "health": health.build(companies),
     }
 
 
