@@ -8,7 +8,7 @@ import { METRICS, CATEGORY_ORDER, setScoring, statusHtml, valueWithDot, VALUATIO
 initLayout();
 
 const ROWS = [
-  ["Оценка", ["total"]],
+  ["Оценка за качество", ["total"]],
   ["Пазар", ["price", "p_nav", "p_nav_avg_3y", "yield_fwd", "yield_ttm", "market_cap", "tsr_1y", "tsr_3y", "insiders_pct", "institutions_pct"]],
   ["Дивидент", ["coverage_ttm", "coverage_q", "cuts_5y", "div_change_1y", "pik_pct_ttm"]],
   ["NAV", ["nav_ps", "nav_chg_1y", "nav_chg_3y", "nav_cagr_long", "nav_tr_1y", "nav_tr_3y", "nav_tr_5y"]],
@@ -67,9 +67,9 @@ function tableHtml(companies) {
     return `<tr><th colspan="${companies.length + 1}" style="background:var(--surface)">${group}</th></tr>${rows}`;
   }).join("");
   const cats = CATEGORY_ORDER.map((k) => `<tr><td>${meta.scoring.categories[k].label}</td>${companies.map((c) => `<td class="num">${f.num(c.score.categories[k], 0)}</td>`).join("")}</tr>`).join("");
-  const val = `<tr><td>Оценка спрямо историята</td>${companies.map((c) => `<td class="num">${c.score.valuation ? VALUATION_LABEL[c.score.valuation] : f.DASH}</td>`).join("")}</tr>`;
+  const val = `<tr><td>Ценово ниво спрямо историята</td>${companies.map((c) => `<td class="num">${c.score.valuation ? VALUATION_LABEL[c.score.valuation] : f.DASH}</td>`).join("")}</tr>`;
   return `<div class="table-wrap"><table><thead>${head}</thead><tbody>${body}
-    <tr><th colspan="${companies.length + 1}" style="background:var(--surface)">Скор по категории</th></tr>${cats}${val}</tbody></table></div>`;
+    <tr><th colspan="${companies.length + 1}" style="background:var(--surface)">Оценка по категории</th></tr>${cats}${val}</tbody></table></div>`;
 }
 
 function quarterKey(d) {

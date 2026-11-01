@@ -9,7 +9,7 @@ export const CATEGORY_ORDER = ["dividend", "nav", "credit", "leverage", "costs"]
 // dir: 1 = по-високо е по-добре, -1 = по-ниско е по-добре, 0 = неутрално
 // (P/NAV и доходността са неутрални: по-евтино или по-висока доходност не значи „по-добре“)
 export const METRICS = {
-  total: { label: "Скор", fmt: (x) => f.num(x, 0), dir: 1, help: "Скор „Качество“ 0–100 по методологията." },
+  total: { label: "Оценка", fmt: (x) => f.num(x, 0), dir: 1, help: "Оценка за качество 0–100 по методологията." },
   price: { label: "Цена", fmt: (x) => f.money(x), dir: 0, help: "Последна цена на затваряне." },
   nav_ps: { label: "NAV/акция", fmt: (x) => f.money(x), dir: 0, help: "Нетна стойност на активите на акция от последния отчет.", g: "nav" },
   p_nav: { label: "P/NAV", fmt: (x) => f.ratio(x), dir: 0, help: "Цена ÷ NAV/акция. Под 1 = акцията се търгува с отстъпка от счетоводната стойност.", g: "p-nav" },
@@ -27,7 +27,7 @@ export const METRICS = {
   nav_tr_3y: { label: "NAV доходн. 3г", fmt: (x) => f.signedPct(x), dir: 1, help: "Годишна икономическа доходност за 3 години.", g: "nav-tr" },
   nav_cagr_long: { label: "NAV дълг. срок", fmt: (x) => f.signedPct(x), dir: 1, help: "Годишна промяна на NAV/акция за до 10 години (поне 5), по всички отчетени стойности, вкл. годишните.", g: "nav" },
   nav_tr_5y: { label: "NAV доходн. 5г", fmt: (x) => f.signedPct(x), dir: 1, help: "Годишна икономическа доходност за 5 години.", g: "nav-tr" },
-  nonaccrual_cost: { label: "Non-accruals", fmt: (x) => f.pct(x, 1), dir: -1, help: "Заеми без начисляване на лихва, % от портфейла по цена на придобиване (участва в скора).", g: "non-accrual" },
+  nonaccrual_cost: { label: "Non-accruals", fmt: (x) => f.pct(x, 1), dir: -1, help: "Заеми без начисляване на лихва, % от портфейла по цена на придобиване (участва в оценката).", g: "non-accrual" },
   nonaccrual_fv: { label: "Non-accr. (FV)", fmt: (x) => f.pct(x, 1), dir: -1, help: "Non-accruals по справедлива стойност. Подценява проблема, защото лошите заеми вече са обезценени." },
   fv_cost: { label: "FV/цена", fmt: (x) => f.pct(x, 1), dir: 1, help: "Справедлива стойност ÷ цена на придобиване на портфейла. Под 100% = натрупани обезценки.", g: "fv-cost" },
   first_lien: { label: "Първи залог", fmt: (x) => f.pct(x, 0), dir: 1, help: "Дял на заемите с първи залог (first lien / senior secured).", g: "first-lien" },
@@ -72,7 +72,7 @@ export function lightFor(score) {
   return score >= th.green ? "green" : score >= th.yellow ? "yellow" : "red";
 }
 
-// Подскор 0–100 за метрика, която участва в скора; null за останалите.
+// Точки 0–100 за метрика, която участва в оценката; null за останалите.
 export function subscore(key, value) {
   if (!scoringConfig || value === null || value === undefined) return null;
   for (const cat of Object.values(scoringConfig.categories)) {
@@ -89,13 +89,13 @@ export function metricLight(key, value) {
 export function statusHtml(light, score) {
   if (!light) {
     const s = score === undefined || score === null ? "" : `${f.num(score, 0)} `;
-    return `<span class="score-pill" title="Липсват данни за над 30% от теглото на скора — без присъда"><span class="dot"></span>${s}<span class="status-text">Непълни данни</span></span>`;
+    return `<span class="score-pill" title="Липсват данни за над 30% от теглото на оценката, затова светофар не се дава"><span class="dot"></span>${s}<span class="status-text">Непълни данни</span></span>`;
   }
   const s = score === undefined || score === null ? "" : `${f.num(score, 0)} `;
   return `<span class="score-pill"><span class="dot ${light}"></span>${s}<span class="status-text">${LIGHT_LABEL[light]}</span></span>`;
 }
 
-// Стойност с цветна точка, когато метриката участва в скора (цветът никога не е единственият сигнал).
+// Стойност с цветна точка, когато метриката участва в оценката (цветът никога не е единственият сигнал).
 export function valueWithDot(key, value) {
   const def = METRICS[key];
   const text = def ? def.fmt(value) : f.num(value);

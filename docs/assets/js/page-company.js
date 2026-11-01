@@ -69,11 +69,11 @@ function scoreHtml(c, meta) {
   return `<div class="grid grid-2">
     <div>
       <div class="tile hero" style="border:0;padding:0">
-        <div class="label">Скор „Качество“</div>
+        <div class="label">Оценка за качество</div>
         <div class="value">${sc.total === null ? f.DASH : f.num(sc.total, 0)}<span class="muted" style="font-size:1rem"> / 100</span></div>
         <div style="margin-top:6px">${statusHtml(sc.light)}</div>
       </div>
-      ${sc.incomplete ? `<p class="small secondary" style="margin-top:8px">Налични са само ${f.pct(sc.coverage, 0)} от теглото на скора, затова светофар не се дава. Числото е ориентировъчно.</p>` : ""}
+      ${sc.incomplete ? `<p class="small secondary" style="margin-top:8px">Налични са само ${f.pct(sc.coverage, 0)} от теглото на оценката, затова светофар не се дава. Числото е ориентировъчно.</p>` : ""}
       ${sc.weak?.length ? `<div class="flag">Светофарът е червен, защото „${sc.weak.map((k) => cats[k].label).join("“, „")}“ е под ${meta.scoring.critical.floor} точки. Силните други категории не могат да компенсират това.</div>` : ""}
       <h3 style="margin-top:16px">Червени флагове</h3>${flags}
     </div>
@@ -207,7 +207,7 @@ function portfolioHtml(c) {
   if (!p.reliable) {
     return `<div class="flag" style="background:var(--surface-2);border-color:var(--border)">Позициите, извлечени от XBRL, не съвпадат с баланса
       (сборът им е ${f.pct(p.coverage, 0)} от инвестициите в баланса), вероятно заради дублирани или липсващи редове.
-      Съставът на портфейла не се показва и не участва в скора. Вижте Schedule of Investments в последния отчет.</div>
+      Съставът на портфейла не се показва и не участва в оценката. Вижте Schedule of Investments в последния отчет.</div>
       <div><h3>Non-accruals</h3>${naTable(p)}</div>`;
   }
   const covNote = p.coverage && p.coverage < 0.9
@@ -321,7 +321,7 @@ async function main() {
   app.innerHTML = `
     ${headerHtml(c, meta)}
     ${section("score", "Оценка", scoreHtml(c, meta))}
-    ${section("metrics", "Ключови метрики", metricsHtml(c, meta), `<span class="small muted">Цветна точка = подскор по методологията</span>`)}
+    ${section("metrics", "Ключови метрики", metricsHtml(c, meta), `<span class="small muted">Цветната точка показва точките на показателя по методологията</span>`)}
     <section class="grid grid-2">
       <div class="card"><div class="card-head"><h3>Цена и NAV/акция</h3>
         <div class="toolbar" style="margin:0">${[[1, "1г"], [3, "3г"], [5, "5г"], [0, "Всичко"]].map(([y, l]) => `<button class="chip" data-range="${y}" aria-pressed="${y === 5}">${l}</button>`).join("")}</div></div>

@@ -86,7 +86,7 @@ function filtered() {
 
 function sorted(rows) {
   const { key, dir } = state.sort;
-  // без светофар (непълни данни) отиват най-долу при сортиране по скор
+  // без светофар (непълни данни) отиват най-долу при сортиране по оценка
   const val = (r) => (key === "total" && r.incomplete ? null : r[key]);
   return [...rows].sort((a, b) => {
     const x = val(a);
@@ -119,7 +119,7 @@ function renderTable() {
     <th scope="col"><span class="sr-only">Сравнение</span></th>
     ${header("ticker", "BDC", "")}
     ${header("total", "Качество", "")}
-    ${header("valuation", "Оценка", "")}
+    ${header("valuation", "Ценово ниво", "")}
     ${cols.map((c) => header(c.key, METRICS[c.key].label, c.text ? "" : "num")).join("")}
   </tr>`;
   const body = rows.length
@@ -238,7 +238,7 @@ function renderScatter(rows) {
   const el = document.getElementById("scatter");
   charts.scatter(el, groups, {
     xName: "P/NAV (цена ÷ NAV/акция)",
-    yName: "Скор",
+    yName: "Оценка",
     yMin: 0,
     yMax: 100,
     xFmt: (v) => f.ratio(v, 1),
@@ -247,11 +247,11 @@ function renderScatter(rows) {
     vLineLabel: "NAV",
     tooltip: (p) => {
       const r = p.data.raw.row;
-      return `<b>${r.ticker}</b> · ${f.escapeHtml(r.name)}<br>Скор: <b>${f.num(r.total, 0)}</b> (${LIGHT_LABEL[r.light]})<br>P/NAV: <b>${f.ratio(r.p_nav)}</b><br>Доходност: ${f.pct(r.yield_fwd)}`;
+      return `<b>${r.ticker}</b> · ${f.escapeHtml(r.name)}<br>Оценка: <b>${f.num(r.total, 0)}</b> (${LIGHT_LABEL[r.light]})<br>P/NAV: <b>${f.ratio(r.p_nav)}</b><br>Доходност: ${f.pct(r.yield_fwd)}`;
     },
   });
   echarts.getInstanceByDom(el)?.on("click", (p) => p.data?.name && (location.href = `company.html?t=${p.data.name}`));
-  charts.dataTable(el.parentElement, ["BDC", "Скор", "P/NAV"], rows.filter((r) => r.total !== null).map((r) => [r.ticker, f.num(r.total, 0), f.ratio(r.p_nav)]));
+  charts.dataTable(el.parentElement, ["BDC", "Оценка", "P/NAV"], rows.filter((r) => r.total !== null).map((r) => [r.ticker, f.num(r.total, 0), f.ratio(r.p_nav)]));
 }
 
 async function renderEvents() {

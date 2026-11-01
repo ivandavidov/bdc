@@ -18,7 +18,7 @@ def main() -> None:
     summary = json.loads((DATA / "summary.json").read_text())["companies"]
     metrics = [m for cat in scoring.CONFIG["categories"].values() for m in cat["metrics"] if m != "internal"]
     missing = Counter()
-    print(f"{'BDC':6} {'скор':>5} {'свет.':7} {'покр.':>6}  липсващи метрики")
+    print(f"{'BDC':6} {'оцен.':>5} {'свет.':7} {'покр.':>6}  липсващи метрики")
     for row in summary:
         c = json.loads((DATA / "companies" / f"{row['ticker']}.json").read_text())
         gaps = [m for m in metrics if c["latest"].get(m) is None]

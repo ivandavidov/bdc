@@ -103,7 +103,7 @@ async function main() {
     </section>
     ${sector.health ? healthHtml() : ""}
     <section class="card">
-      <div class="card-head"><h2>Класация по скор „Качество“</h2>
+      <div class="card-head"><h2>Класация по оценка за качество</h2>
         <div class="legend">${["green", "yellow", "red"].map((l) => `<span><span class="dot ${l}"></span>${LIGHT_LABEL[l]}</span>`).join("")}</div></div>
       <div id="s-rank" style="height:${Math.max(300, rows.filter((r) => !r.incomplete).length * 22 + 20)}px"></div>
       <p class="small muted" id="s-unrated"></p>
@@ -157,7 +157,7 @@ async function main() {
   });
   echarts.getInstanceByDom(rankEl)?.on("click", (p) => (location.href = `company.html?t=${p.name}`));
   if (unrated.length) document.getElementById("s-unrated").textContent = `Без класиране поради непълни данни: ${unrated.join(", ")}.`;
-  charts.dataTable(rankEl.parentElement, ["BDC", "Скор", "Светофар"], ranked.map((r) => [r.ticker, f.num(r.total, 0), LIGHT_LABEL[r.light] ?? f.DASH]));
+  charts.dataTable(rankEl.parentElement, ["BDC", "Оценка", "Светофар"], ranked.map((r) => [r.ticker, f.num(r.total, 0), LIGHT_LABEL[r.light] ?? f.DASH]));
 }
 
 main();

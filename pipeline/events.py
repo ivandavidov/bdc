@@ -50,7 +50,7 @@ def diff(prev: dict, cur: dict, company: dict) -> list[dict]:
     if prev.get("light") != cur.get("light") and cur.get("light"):
         order = {"red": 0, "yellow": 1, "green": 2}
         sev = "good" if order.get(cur["light"], 0) > order.get(prev.get("light"), 0) else "bad"
-        add("light", sev, f"Светофарът се смени от {LIGHT_BG[prev.get('light')]} на {LIGHT_BG[cur['light']]} (скор {_num(cur['total'] or 0)})")
+        add("light", sev, f"Светофарът се смени от {LIGHT_BG[prev.get('light')]} на {LIGHT_BG[cur['light']]} (оценка {_num(cur['total'] or 0)})")
     p_div, c_div = prev.get("div_run_rate"), cur.get("div_run_rate")
     if p_div and c_div is not None and abs(c_div / p_div - 1) > 0.02:
         change = c_div / p_div - 1
