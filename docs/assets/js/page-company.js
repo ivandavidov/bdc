@@ -33,7 +33,7 @@ function headerHtml(c, meta) {
         <button class="star" id="watch" aria-pressed="${watched}" title="Моят списък" aria-label="Добави в моя списък">★</button></h1>
       <div class="meta-line">
         <span>${c.exchange ?? ""}</span>
-        ${c.manager && s.managed !== "internal" ? `<span>Мениджър: ${f.escapeHtml(c.manager)}</span>` : ""}
+        ${c.manager && s.managed !== "internal" ? `<span>Управляващо дружество: ${f.escapeHtml(c.manager)}</span>` : ""}
         ${managed}
         <span>Последен отчет: ${f.quarterLabel(s.nav_date)} (${f.date(s.nav_date)})</span>
         <a href="${c.edgar_url}" target="_blank" rel="noopener">Отчети в SEC EDGAR ↗</a>
@@ -41,7 +41,7 @@ function headerHtml(c, meta) {
       </div>
     </div>
     <div class="toolbar" style="margin:0">
-      <button class="btn" id="add-compare" type="button">+ Сравни</button>
+      <button class="btn" id="add-compare" type="button">+ Добави за сравнение</button>
     </div>
   </div>
   <div class="tiles" style="margin-top:16px">
@@ -65,7 +65,7 @@ function scoreHtml(c, meta) {
   }).join("");
   const flags = sc.flags.length
     ? sc.flags.map((k) => `<div class="flag">${f.escapeHtml(meta.scoring.flags[k])}</div>`).join("")
-    : `<p class="secondary small">Няма червени флагове.</p>`;
+    : `<p class="secondary small">Няма предупреждения.</p>`;
   return `<div class="grid grid-2">
     <div>
       <div class="tile hero" style="border:0;padding:0">
@@ -75,7 +75,7 @@ function scoreHtml(c, meta) {
       </div>
       ${sc.incomplete ? `<p class="small secondary" style="margin-top:8px">Налични са само ${f.pct(sc.coverage, 0)} от теглото на оценката, затова светофар не се дава. Числото е ориентировъчно.</p>` : ""}
       ${sc.weak?.length ? `<div class="flag">Светофарът е червен, защото „${sc.weak.map((k) => cats[k].label).join("“, „")}“ е под ${meta.scoring.critical.floor} точки. Силните други категории не могат да компенсират това.</div>` : ""}
-      <h3 style="margin-top:16px">Червени флагове</h3>${flags}
+      <h3 style="margin-top:16px">Предупреждения</h3>${flags}
     </div>
     <div><div class="breakdown">${rows}</div>
       <p class="small muted" style="margin-top:10px">Ленти по категории (0–100). <a href="methodology.html">Методология</a></p></div>
@@ -89,7 +89,7 @@ function metricsHtml(c, meta) {
     ["Дивидент", ["coverage_ttm", "coverage_q", "yield_ttm", "cuts_5y", "div_change_1y", "pik_pct_ttm"]],
     ["NAV и резултатност", ["nav_tr_1y", "nav_tr_3y", "nav_tr_5y", "nav_chg_1y", "nav_chg_3y", "nav_cagr_long", "nii_roe_ttm"]],
     ["Кредитно качество", ["nonaccrual_cost", "nonaccrual_fv", "fv_cost", "first_lien", "top10", "n_companies"]],
-    ["Ливъридж и разходи", ["de", "net_de", "asset_coverage", "opex_ratio", "tsr_1y", "tsr_3y"]],
+    ["Задлъжнялост и разходи", ["de", "net_de", "asset_coverage", "opex_ratio", "tsr_1y", "tsr_3y"]],
   ];
   return `<div class="grid grid-2">${groups.map(([title, keys]) => `<div><h3>${title}</h3>
     <table class="compact kv"><tbody>${keys.map((k) => {
@@ -163,13 +163,13 @@ function renderCharts(c, sector) {
     { categories: L, yFmt: (v) => f.pct(v, 0), refLines: [{ y: 1, label: "100%" }] });
 
   charts.bars(document.getElementById("ch-econ"), [
-    { name: "Икономическа доходност", data: last(q.econ_return) },
+    { name: "Доходност на NAV", data: last(q.econ_return) },
     { name: "Медиана на сектора", data: last(sectorSeries("econ_return")), type: "line" },
   ], { categories: L, yFmt: (v) => f.pct(v, 1), colorBySign: true });
-  charts.dataTable(document.getElementById("ch-econ").parentElement, ["Тримесечие", "NAV/акция", "Икономическа доходност", "Медиана сектор"],
+  charts.dataTable(document.getElementById("ch-econ").parentElement, ["Тримесечие", "NAV/акция", "Доходност на NAV", "Медиана на сектора"],
     qs.map((d, i) => [f.quarterLabel(d), f.money(q.nav_ps[i]), f.signedPct(q.econ_return[i]), f.signedPct(sectorSeries("econ_return")[i])]).reverse());
 
-  // Non-accruals
+  // Необслужвани заеми
   const naIdx = qs.map((d, i) => i).filter((i) => q.nonaccrual_fv?.[i] !== null && q.nonaccrual_fv?.[i] !== undefined);
   const naEl = document.getElementById("ch-na");
   if (naIdx.length) {
@@ -179,7 +179,7 @@ function renderCharts(c, sector) {
       { name: "Медиана на сектора (цена)", data: naIdx.map((i) => sectorSeries("nonaccrual_cost")[i]) },
     ], { time: false, categories: naIdx.map((i) => labels[i]), yFmt: (v) => f.pct(v, 1), yMin: 0 });
   } else {
-    naEl.outerHTML = `<p class="empty">Non-accruals не са открити в XBRL данните на отчетите.</p>`;
+    naEl.outerHTML = `<p class="empty">Необслужвани заеми не са открити в XBRL данните на отчетите.</p>`;
   }
 
   charts.line(document.getElementById("ch-lev"), [
@@ -195,9 +195,9 @@ function renderCharts(c, sector) {
 
 function naTable(p) {
   return p.nonaccrual_names?.length
-    ? `<div class="table-wrap"><table class="compact"><thead><tr><th>Компания на non-accrual</th><th class="num" title="Справедлива стойност">Спр. ст.</th><th class="num" title="Цена на придобиване">Цена</th></tr></thead>
+    ? `<div class="table-wrap"><table class="compact"><thead><tr><th>Необслужван кредитополучател</th><th class="num" title="Справедлива стойност">Спр. ст.</th><th class="num" title="Цена на придобиване">Цена</th></tr></thead>
        <tbody>${p.nonaccrual_names.slice(0, 10).map((r) => `<tr><td>${f.escapeHtml(r.name)}</td><td class="num">${f.compactMoney(r.fv)}</td><td class="num">${f.compactMoney(r.cost)}</td></tr>`).join("")}</tbody></table></div>`
-    : `<p class="muted small">Няма поименно открити заеми на non-accrual (данните може да са само обобщени).</p>`;
+    : `<p class="muted small">Няма поименно открити необслужвани заеми (данните може да са само обобщени).</p>`;
 }
 
 function portfolioHtml(c) {
@@ -208,22 +208,22 @@ function portfolioHtml(c) {
     return `<div class="flag" style="background:var(--surface-2);border-color:var(--border)">Позициите, извлечени от XBRL, не съвпадат с баланса
       (сборът им е ${f.pct(p.coverage, 0)} от инвестициите в баланса), вероятно заради дублирани или липсващи редове.
       Съставът на портфейла не се показва и не участва в оценката. Вижте Schedule of Investments в последния отчет.</div>
-      <div><h3>Non-accruals</h3>${naTable(p)}</div>`;
+      <div><h3>Необслужвани заеми</h3>${naTable(p)}</div>`;
   }
   const covNote = p.coverage && p.coverage < 0.9
     ? `<p class="small secondary">Разпознатите позиции покриват ${f.pct(p.coverage, 0)} от портфейла по баланс; съставът е за тази част.</p>` : "";
   const typeNote = p.typed_share < 0.8
-    ? `<p class="small secondary">За ${f.pct(1 - p.typed_share, 0)} от портфейла типът (залог, дълг, акции) не е маркиран в XBRL, затова делът „първи залог“ не се изчислява.</p>` : "";
+    ? `<p class="small secondary">За ${f.pct(1 - p.typed_share, 0)} от портфейла типът (залог, дълг, акции) не е маркиран в XBRL, затова делът „първи по ред залог“ не се изчислява.</p>` : "";
   const na = naTable(p);
   return `<p class="secondary small">Към ${f.date(p.period)} (${p.form}) · ${f.int(p.n_companies)} компании · ${f.int(p.n_investments)} позиции
     · плаваща лихва ${f.pct(p.floating, 0)} от дълга · средна лихва по дълга ${f.pct(p.debt_yield)}</p>${covNote}${typeNote}
     <div class="grid grid-2">
       <div><h3>По тип инвестиция</h3><div class="chart short" id="ch-types"></div></div>
       <div><h3>Отрасли</h3>${unspecified > 0.5 ? `<p class="muted small">Компанията не маркира отраслите в XBRL (${f.pct(unspecified, 0)} без отрасъл).</p>` : `<div class="chart short" id="ch-ind"></div>`}</div>
-      <div><h3>Топ 10 позиции</h3><div class="table-wrap"><table class="compact"><thead><tr><th>Компания</th><th class="num">% от портфейла</th></tr></thead>
+      <div><h3>10-те най-големи позиции</h3><div class="table-wrap"><table class="compact"><thead><tr><th>Компания</th><th class="num">% от портфейла</th></tr></thead>
         <tbody>${p.top10.map(([n, v]) => `<tr><td>${f.escapeHtml(n)}</td><td class="num">${f.pct(v, 1)}</td></tr>`).join("")}</tbody></table></div>
-        <p class="small muted">Общо топ 10: ${f.pct(p.top10_pct, 0)}</p></div>
-      <div><h3>Non-accruals</h3>${na}</div>
+        <p class="small muted">Общо за 10-те най-големи: ${f.pct(p.top10_pct, 0)}</p></div>
+      <div><h3>Необслужвани заеми</h3>${na}</div>
     </div>`;
 }
 
@@ -246,8 +246,8 @@ function dividendsHtml(c) {
     ? `<ul>${[...c.cuts].reverse().map((x) => `<li>${f.date(x.date)}: ${f.money(x.from)} → ${f.money(x.to)} годишно (${f.signedPct(x.change)})</li>`).join("")}</ul>`
     : `<p class="muted small">Няма засечени съкращения за последните 10 години.</p>`;
   return `<div class="grid grid-2">
-    <div><h3>Последни плащания (по ex-дата)</h3>
-      <div class="table-wrap" style="max-height:360px"><table class="compact"><thead><tr><th>Ex-дата</th><th class="num">Сума</th><th>Вид</th></tr></thead>
+    <div><h3>Последни плащания (по дата без право на дивидент)</h3>
+      <div class="table-wrap" style="max-height:360px"><table class="compact"><thead><tr><th title="Дата без право на дивидент (ex-date)">Дата</th><th class="num">Сума</th><th>Вид</th></tr></thead>
       <tbody>${rows.map((d) => `<tr><td>${f.date(d.date)}</td><td class="num">${f.money(d.amount, 3)}</td>
         <td>${d.special > 0 && d.regular > 0 ? `редовен ${f.money(d.regular, 3)} + специален` : d.special > 0 ? "специален / допълнителен" : `редовен (${freq[d.freq] ?? ""})`}</td></tr>`).join("")}</tbody></table></div></div>
     <div><h3>Съкращения на дивидента</h3>${cuts}
@@ -264,8 +264,8 @@ function costsHtml(c) {
   };
   return `<table class="compact kv"><tbody>
     <tr><td>Управление</td><td>${s.managed ? MANAGED_LABEL[s.managed] : f.DASH}${c.manager ? ` · ${f.escapeHtml(c.manager)}` : ""}</td></tr>
-    <tr><td>Такса за управление (12 м)</td><td class="num">${f.compactMoney(ttm(q.mgmt_fee))}</td></tr>
-    <tr><td>Incentive такса (12 м)</td><td class="num">${f.compactMoney(ttm(q.incentive_fee))}</td></tr>
+    <tr><td>Такса за управление (12 м.)</td><td class="num">${f.compactMoney(ttm(q.mgmt_fee))}</td></tr>
+    <tr><td>Такса за постигнат резултат (12 м.)</td><td class="num">${f.compactMoney(ttm(q.incentive_fee))}</td></tr>
     <tr><td>${METRICS.opex_ratio.label} — без лихви, % от NAV</td><td class="num">${valueWithDot("opex_ratio", s.opex_ratio)}</td></tr>
     <tr><td>Общ коефициент на разходите (отчетен, вкл. лихви)</td><td class="num">${f.pct(s.expense_ratio_reported)}</td></tr>
   </tbody></table>`;
@@ -282,8 +282,8 @@ function holdersHtml(c) {
         <td class="num ${f.deltaClass(r.change)}">${r.change === null ? f.DASH : f.signedPct(r.change)}</td><td class="num">${f.date(r.date)}</td></tr>`).join("")}</tbody></table></div>`
     : "";
   return `<div class="tiles">
-      <div class="tile"><div class="label">Инсайдери</div><div class="value">${f.pct(h.insiders, 1)}</div><div class="sub">ръководство, директори, мениджър</div></div>
-      <div class="tile"><div class="label">Институции</div><div class="value">${f.pct(h.institutions, 0)}</div><div class="sub">${h.institutions_count ? `${f.int(h.institutions_count)} институции` : ""}</div></div>
+      <div class="tile"><div class="label">Вътрешни лица</div><div class="value">${f.pct(h.insiders, 1)}</div><div class="sub">ръководство, директори, управляващо дружество</div></div>
+      <div class="tile"><div class="label">Институционални инвеститори</div><div class="value">${f.pct(h.institutions, 0)}</div><div class="sub">${h.institutions_count ? `брой: ${f.int(h.institutions_count)}` : ""}</div></div>
       <div class="tile"><div class="label">Индивидуални и други</div><div class="value">${f.pct(retail, 0)}</div><div class="sub">остатъкът (приблизително)</div></div>
     </div>
     <div class="stack" style="margin-top:16px">
@@ -321,17 +321,17 @@ async function main() {
   app.innerHTML = `
     ${headerHtml(c, meta)}
     ${section("score", "Оценка", scoreHtml(c, meta))}
-    ${section("metrics", "Ключови метрики", metricsHtml(c, meta), `<span class="small muted">Цветната точка показва точките на показателя по методологията</span>`)}
+    ${section("metrics", "Ключови показатели", metricsHtml(c, meta), `<span class="small muted">Цветната точка показва точките на показателя по методологията</span>`)}
     <section class="grid grid-2">
       <div class="card"><div class="card-head"><h3>Цена и NAV/акция</h3>
-        <div class="toolbar" style="margin:0">${[[1, "1г"], [3, "3г"], [5, "5г"], [0, "Всичко"]].map(([y, l]) => `<button class="chip" data-range="${y}" aria-pressed="${y === 5}">${l}</button>`).join("")}</div></div>
+        <div class="toolbar" style="margin:0">${[[1, "1 г."], [3, "3 г."], [5, "5 г."], [0, "Всичко"]].map(([y, l]) => `<button class="chip" data-range="${y}" aria-pressed="${y === 5}">${l}</button>`).join("")}</div></div>
         <p class="secondary small">Цената под NAV линията = отстъпка; над нея = премия.</p><div class="chart" id="ch-price"></div></div>
       ${chartCard("ch-pnav", "P/NAV във времето", "Под 1,0 = търгува се под нетната стойност на активите.")}
-      ${chartCard("ch-nii", "Нетен инвестиционен доход срещу дивидент", "На акция, по тримесечия. Колона над линията = дивидентът е изкаран.")}
+      ${chartCard("ch-nii", "Нетен инвестиционен доход срещу дивидент", "На акция, по тримесечия. Колона над линията = доходът покрива дивидента.")}
       ${chartCard("ch-cov", "Покритие на дивидента", "NII ÷ редовен дивидент. Под 100% дивидентът се плаща частично от капитала или от натрупан доход.")}
-      ${chartCard("ch-econ", "Икономическа доходност на NAV", "(Промяна на NAV + разпределения) ÷ начален NAV за всяко тримесечие.")}
-      ${chartCard("ch-na", "Non-accruals", "Дял на заемите, по които не се начислява лихва.")}
-      ${chartCard("ch-lev", "Ливъридж (D/E)", "Дълг ÷ нетни активи. Регулаторният таван е 2,0x (asset coverage 150%).")}
+      ${chartCard("ch-econ", "Доходност на NAV (с дивидентите)", "(Промяна на NAV + разпределения) ÷ начален NAV за всяко тримесечие.")}
+      ${chartCard("ch-na", "Необслужвани заеми", "Дял на заемите, по които не се начислява лихва.")}
+      ${chartCard("ch-lev", "Задлъжнялост (D/E)", "(Дълг + привилегировани акции) ÷ нетни активи. Законовият таван е 2,0x (покритие на дълга с активи 150%).")}
       ${chartCard("ch-pik", "PIK доход", "Дял на безкасовия доход (лихва, платена с нов дълг) в общия инвестиционен доход.")}
     </section>
     ${section("portfolio", "Портфейл", portfolioHtml(c))}
@@ -353,7 +353,7 @@ async function main() {
   const addBtn = document.getElementById("add-compare");
   const paint = () => {
     const inList = store.compareList().includes(c.ticker);
-    addBtn.textContent = inList ? "✓ В сравнението" : "+ Сравни";
+    addBtn.textContent = inList ? "✓ В сравнението" : "+ Добави за сравнение";
   };
   paint();
   addBtn.addEventListener("click", () => {

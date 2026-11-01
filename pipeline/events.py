@@ -59,9 +59,9 @@ def diff(prev: dict, cur: dict, company: dict) -> list[dict]:
     p_na, c_na = prev.get("nonaccrual_cost"), cur.get("nonaccrual_cost")
     if p_na is not None and c_na is not None and abs(c_na - p_na) >= 0.01:
         add("nonaccrual", "bad" if c_na > p_na else "good",
-            f"Non-accruals: {p_na * 100:.1f}% → {c_na * 100:.1f}% от портфейла".replace(".", ","))
+            f"Необслужвани заеми: {p_na * 100:.1f}% → {c_na * 100:.1f}% от портфейла".replace(".", ","))
     for flag in set(cur.get("flags") or []) - set(prev.get("flags") or []):
-        add("flag", "bad", f"Нов червен флаг: {scoring.CONFIG['flags'][flag]}")
+        add("flag", "bad", f"Ново предупреждение: {scoring.CONFIG['flags'][flag]}")
     return out
 
 
@@ -113,7 +113,7 @@ def write_feed(entries: list[dict]) -> None:
         '<rss version="2.0"><channel>'
         "<title>BDC Радар — промени</title>"
         f"<link>{escape(base + 'changes.html')}</link>"
-        "<description>Важни промени при борсово търгуваните BDC: отчети, дивиденти, non-accruals, светофар.</description>"
+        "<description>Важни промени при борсово търгуваните BDC: отчети, дивиденти, необслужвани заеми, светофар.</description>"
         "<language>bg</language>"
         f"<lastBuildDate>{now}</lastBuildDate>"
         + "".join(items)

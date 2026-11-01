@@ -13,7 +13,7 @@ const ROWS = [
   ["Дивидент", ["coverage_ttm", "coverage_q", "cuts_5y", "div_change_1y", "pik_pct_ttm"]],
   ["NAV", ["nav_ps", "nav_chg_1y", "nav_chg_3y", "nav_cagr_long", "nav_tr_1y", "nav_tr_3y", "nav_tr_5y"]],
   ["Кредит", ["nonaccrual_cost", "nonaccrual_fv", "fv_cost", "first_lien", "top10", "n_companies", "floating"]],
-  ["Ливъридж и разходи", ["de", "net_de", "asset_coverage", "opex_ratio", "managed"]],
+  ["Задлъжнялост и разходи", ["de", "net_de", "asset_coverage", "opex_ratio", "managed"]],
 ];
 
 let selected = [];
@@ -51,7 +51,7 @@ function best(key, values) {
 }
 
 function tableHtml(companies) {
-  const head = `<tr><th>Метрика</th>${companies.map((c) => `<th class="num"><a href="company.html?t=${c.ticker}">${c.ticker}</a></th>`).join("")}</tr>`;
+  const head = `<tr><th>Показател</th>${companies.map((c) => `<th class="num"><a href="company.html?t=${c.ticker}">${c.ticker}</a></th>`).join("")}</tr>`;
   const body = ROWS.map(([group, keys]) => {
     const rows = keys.map((k) => {
       const values = companies.map((c) => (k === "total" ? c.score.total : c.latest[k]));
@@ -134,9 +134,9 @@ async function refresh() {
       <div class="card"><h3>NAV/акция (индекс, начало = 100)</h3><p class="secondary small">Индексиран, защото абсолютните NAV/акция не са сравними между компании.</p><div class="chart" id="cmp-nav"></div></div>
       <div class="card"><h3>P/NAV</h3><div class="chart" id="cmp-pnav"></div></div>
       <div class="card"><h3>Покритие на дивидента</h3><div class="chart" id="cmp-cov"></div></div>
-      <div class="card"><h3>Икономическа доходност по тримесечия</h3><div class="chart" id="cmp-econ"></div></div>
-      <div class="card"><h3>Non-accruals (% по цена на придобиване)</h3><div class="chart" id="cmp-na"></div></div>
-      <div class="card"><h3>Ливъридж (D/E)</h3><div class="chart" id="cmp-de"></div></div>
+      <div class="card"><h3>Доходност на NAV по тримесечия</h3><div class="chart" id="cmp-econ"></div></div>
+      <div class="card"><h3>Необслужвани заеми (% по цена на придобиване)</h3><div class="chart" id="cmp-na"></div></div>
+      <div class="card"><h3>Задлъжнялост (D/E)</h3><div class="chart" id="cmp-de"></div></div>
     </section>`;
   renderCharts(companies);
 }

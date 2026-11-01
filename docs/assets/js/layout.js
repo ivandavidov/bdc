@@ -70,7 +70,7 @@ export function initLayout() {
   const footer = document.createElement("footer");
   footer.className = "site-footer";
   footer.innerHTML = `<div class="inner">
-    <div class="disclaimer"><strong>Това не е инвестиционен съвет.</strong> Сайтът обобщава публични данни с автоматични изчисления, които може да съдържат грешки.
+    <div class="disclaimer"><strong>Информацията на сайта не представлява инвестиционен съвет.</strong> Сайтът обобщава публични данни с автоматични изчисления, които може да съдържат грешки.
     Проверявайте оригиналните отчети преди решение.</div>
     <div>Източници: SEC EDGAR (XBRL отчети 10-Q/10-K), Yahoo Finance (цени и дивиденти). <span id="data-stamp"></span></div>
     <div><a href="methodology.html">Методология</a> · <a href="feed.xml">RSS на промените</a></div>

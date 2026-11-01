@@ -60,10 +60,10 @@ function tiles(rows) {
       ${["green", "yellow", "red"].map((l) => `<span class="status"><span class="dot ${l}"></span>${LIGHT_LABEL[l]}: <b>${counts[l]}</b></span>`).join("")}
       ${unrated ? `<span class="status muted small"><span class="dot"></span>Непълни данни: ${unrated}</span>` : ""}
     </div></div>`,
-    tile("Медиана P/NAV", f.ratio(median(rows.map((r) => r.p_nav))), "цена спрямо NAV/акция"),
-    tile("Медиана доходност", f.pct(median(rows.map((r) => r.yield_fwd))), "редовен дивидент ÷ цена"),
-    tile("Медиана non-accruals", f.pct(median(rows.map((r) => r.nonaccrual_cost))), "% от портфейла по цена"),
-    tile("Медиана покритие", f.pct(median(rows.map((r) => r.coverage_ttm)), 0), "NII ÷ дивидент, 12 м"),
+    tile("Медиана на P/NAV", f.ratio(median(rows.map((r) => r.p_nav))), "цена спрямо NAV/акция"),
+    tile("Медианна доходност", f.pct(median(rows.map((r) => r.yield_fwd))), "редовен дивидент ÷ цена"),
+    tile("Медиана на необслужваните заеми", f.pct(median(rows.map((r) => r.nonaccrual_cost))), "% от портфейла по цена на придобиване"),
+    tile("Медианно покритие", f.pct(median(rows.map((r) => r.coverage_ttm)), 0), "NII ÷ дивидент, 12 м."),
   ].join("");
 }
 
@@ -126,7 +126,7 @@ function renderTable() {
     ? rows.map((r) => {
         const watched = state.watch.has(r.ticker);
         const comparing = state.compare.includes(r.ticker);
-        const flags = r.flags?.length ? ` <span class="badge" title="${r.flags.length} червени флага">⚑ ${r.flags.length}</span>` : "";
+        const flags = r.flags?.length ? ` <span class="badge" title="Предупреждения: ${r.flags.length}">⚑ ${r.flags.length}</span>` : "";
         return `<tr>
           <td><button class="star" data-watch="${r.ticker}" aria-pressed="${watched}" title="${watched ? "Махни от" : "Добави в"} моя списък" aria-label="Наблюдение ${r.ticker}">★</button></td>
           <td><input type="checkbox" class="compare-check" data-compare="${r.ticker}" ${comparing ? "checked" : ""} aria-label="Сравни ${r.ticker}"></td>
